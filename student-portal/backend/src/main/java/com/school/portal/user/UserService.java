@@ -1,4 +1,4 @@
-﻿package com.school.portal.user;
+package com.school.portal.user;
 
 import com.school.portal.common.RoleType;
 import com.school.portal.user.dto.UserDto;

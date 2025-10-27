@@ -39,6 +39,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DemoDataSeeder implements ApplicationRunner {
 
+    private static final String PERSONAL_SEMESTER = "PERSONAL";
+
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final GradeRepository gradeRepository;
@@ -52,16 +54,16 @@ public class DemoDataSeeder implements ApplicationRunner {
     @Override
     @Transactional
     public void run(ApplicationArguments args) {
-        User alice = ensureUser("student1@school.test", "Alice Dupont", RoleType.STUDENT);
-        User bob = ensureUser("student2@school.test", "Bob Martin", RoleType.STUDENT);
-        User staff = ensureUser("staff@school.test", "Claire Support", RoleType.STAFF);
-        ensureUser("admin@school.test", "David Admin", RoleType.ADMIN);
+        User emma = ensureUser("student1@school.test", "Emma Laurent", RoleType.STUDENT);
+        User lucas = ensureUser("student2@school.test", "Lucas Bernard", RoleType.STUDENT);
+        User sophie = ensureUser("staff@school.test", "Sophie Martin", RoleType.STAFF);
+        ensureUser("admin@school.test", "Noah Leroy", RoleType.ADMIN);
 
-        seedGrades(alice, bob);
-        seedTimetables();
-        var requests = seedRequests(alice, bob);
-        seedMessaging(alice, bob, staff);
-        seedPayments(alice, bob, requests);
+        seedGrades(emma, lucas);
+        seedTimetables(emma, lucas);
+        List<StudentRequest> requests = seedRequests(emma, lucas);
+        seedMessaging(emma, lucas, sophie);
+        seedPayments(emma, lucas, requests);
         seedFaqs();
     }
 
@@ -74,132 +76,188 @@ public class DemoDataSeeder implements ApplicationRunner {
                 .build()));
     }
 
-    private void seedGrades(User alice, User bob) {
+    private void seedGrades(User emma, User lucas) {
         if (gradeRepository.count() > 0) {
             return;
         }
         gradeRepository.saveAll(List.of(
-                Grade.builder().student(alice).moduleCode("MATH101").moduleTitle("Analyse 1").session("2024-S1").grade(14.5).publishedAt(Instant.now().minusSeconds(864000)).build(),
-                Grade.builder().student(alice).moduleCode("PHY101").moduleTitle("Physique").session("2024-S1").grade(12.0).publishedAt(Instant.now().minusSeconds(691200)).build(),
-                Grade.builder().student(alice).moduleCode("CS102").moduleTitle("Programmation").session("2024-S1").grade(16.5).publishedAt(Instant.now().minusSeconds(432000)).build(),
-                Grade.builder().student(bob).moduleCode("CS102").moduleTitle("Programmation").session("2024-S1").grade(13.0).publishedAt(Instant.now().minusSeconds(432000)).build(),
-                Grade.builder().student(bob).moduleCode("ENG201").moduleTitle("Communication professionnelle").session("2024-S1").grade(15.0).publishedAt(Instant.now().minusSeconds(172800)).build()
+                Grade.builder().student(emma).moduleCode("ALG204").moduleTitle("Algorithms II").session("2024-Fall").grade(15.5).publishedAt(Instant.now().minusSeconds(720000)).build(),
+                Grade.builder().student(emma).moduleCode("NET210").moduleTitle("Computer Networks").session("2024-Fall").grade(13.0).publishedAt(Instant.now().minusSeconds(604800)).build(),
+                Grade.builder().student(emma).moduleCode("UX150").moduleTitle("Human Computer Interaction").session("2024-Fall").grade(16.5).publishedAt(Instant.now().minusSeconds(432000)).build(),
+                Grade.builder().student(lucas).moduleCode("AI220").moduleTitle("Applied Machine Learning").session("2024-Fall").grade(14.2).publishedAt(Instant.now().minusSeconds(518400)).build(),
+                Grade.builder().student(lucas).moduleCode("DB230").moduleTitle("Advanced Databases").session("2024-Fall").grade(17.0).publishedAt(Instant.now().minusSeconds(259200)).build()
         ));
     }
 
-    private void seedTimetables() {
-        if (timetableRepository.count() > 0) {
-            return;
-        }
+    private void seedTimetables(User emma, User lucas) {
         LocalDate currentMonday = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
         LocalDate nextMonday = currentMonday.plusWeeks(1);
-        timetableRepository.saveAll(List.of(
-                Timetable.builder()
-                        .program("Informatique")
-                        .semester("S2")
-                        .weekStart(currentMonday)
-                        .dataJson("{\"events\":[{\"title\":\"Algèbre\",\"start\":\"09:00\",\"end\":\"11:00\",\"day\":\"Monday\"},{\"title\":\"Projet collaboratif\",\"start\":\"14:00\",\"end\":\"17:00\",\"day\":\"Wednesday\"},{\"title\":\"Examen blanc\",\"start\":\"10:00\",\"end\":\"12:00\",\"day\":\"Friday\"}]}")
-                        .build(),
-                Timetable.builder()
-                        .program("Informatique")
-                        .semester("S2")
-                        .weekStart(nextMonday)
-                        .dataJson("{\"events\":[{\"title\":\"Atelier DevOps\",\"start\":\"09:30\",\"end\":\"11:30\",\"day\":\"Tuesday\"},{\"title\":\"Projet tutoré\",\"start\":\"13:30\",\"end\":\"16:30\",\"day\":\"Thursday\"},{\"title\":\"Sport\",\"start\":\"15:00\",\"end\":\"17:00\",\"day\":\"Friday\"}]}")
-                        .build()
-        ));
+
+        String emmaCurrent = """
+{
+  "events": [
+    { "day": "Monday", "start": "08:30", "end": "10:00", "title": "Data Mining", "type": "Lecture", "room": "D-201", "teacher": "Dr. Allen" },
+    { "day": "Monday", "start": "10:15", "end": "12:15", "title": "Python for Analytics", "type": "Lab", "room": "Lab 4", "teacher": "Ms. Clark" },
+    { "day": "Tuesday", "start": "09:00", "end": "11:00", "title": "Statistics Clinic", "type": "Workshop", "room": "B-110", "teacher": "Prof. Nguyen" },
+    { "day": "Wednesday", "start": "13:30", "end": "15:30", "title": "Machine Learning Project", "type": "Lab", "room": "AI Studio", "teacher": "Coach Reed" },
+    { "day": "Thursday", "start": "08:30", "end": "10:00", "title": "Ethics in AI", "type": "Seminar", "room": "Auditorium", "teacher": "Dr. Patel" },
+    { "day": "Thursday", "start": "10:15", "end": "11:45", "title": "Data Visualization Studio", "type": "Lab", "room": "Design Hub", "teacher": "Ms. Lopez" },
+    { "day": "Friday", "start": "09:30", "end": "11:00", "title": "Startup Lab", "type": "Workshop", "room": "Innovation Lab", "teacher": "Mentor Squad" }
+  ]
+}
+""";
+
+        String emmaNext = """
+{
+  "events": [
+    { "day": "Monday", "start": "09:00", "end": "11:00", "title": "Deep Learning", "type": "Lecture", "room": "D-204", "teacher": "Dr. Allen" },
+    { "day": "Tuesday", "start": "08:30", "end": "10:30", "title": "TensorFlow Practice", "type": "Lab", "room": "Lab 4", "teacher": "Ms. Clark" },
+    { "day": "Tuesday", "start": "14:00", "end": "15:30", "title": "Career Coaching", "type": "Seminar", "room": "Advising Center", "teacher": "Career Team" },
+    { "day": "Wednesday", "start": "10:00", "end": "12:00", "title": "Data Ethics Workshop", "type": "Workshop", "room": "B-110", "teacher": "Prof. Nguyen" },
+    { "day": "Thursday", "start": "09:30", "end": "11:30", "title": "Capstone Sprint", "type": "Lab", "room": "AI Studio", "teacher": "Coach Reed" },
+    { "day": "Friday", "start": "08:30", "end": "10:00", "title": "Visualization Critique", "type": "Seminar", "room": "Design Hub", "teacher": "Ms. Lopez" },
+    { "day": "Friday", "start": "10:15", "end": "11:45", "title": "Innovation Pitch", "type": "Workshop", "room": "Innovation Lab", "teacher": "Mentor Squad" }
+  ]
+}
+""";
+
+        String lucasCurrent = """
+{
+  "events": [
+    { "day": "Monday", "start": "10:00", "end": "12:00", "title": "Network Forensics", "type": "Lecture", "room": "C-305", "teacher": "Dr. Martin" },
+    { "day": "Monday", "start": "13:30", "end": "15:30", "title": "Security Operations Lab", "type": "Lab", "room": "Cyber Lab", "teacher": "Ms. Kim" },
+    { "day": "Tuesday", "start": "09:00", "end": "10:30", "title": "Secure Coding", "type": "Workshop", "room": "C-201", "teacher": "Mr. Ruiz" },
+    { "day": "Wednesday", "start": "08:30", "end": "10:00", "title": "Incident Response", "type": "Lecture", "room": "C-305", "teacher": "Dr. Martin" },
+    { "day": "Wednesday", "start": "10:15", "end": "12:15", "title": "Blue Team Simulation", "type": "Lab", "room": "Cyber Range", "teacher": "Ms. Kim" },
+    { "day": "Thursday", "start": "14:00", "end": "16:00", "title": "Penetration Testing", "type": "Lab", "room": "Cyber Lab", "teacher": "Coach Rivera" },
+    { "day": "Friday", "start": "09:30", "end": "11:00", "title": "Security Briefing", "type": "Seminar", "room": "War Room", "teacher": "Guest Team" }
+  ]
+}
+""";
+
+        String lucasNext = """
+{
+  "events": [
+    { "day": "Monday", "start": "08:30", "end": "10:30", "title": "Cloud Security", "type": "Lecture", "room": "C-305", "teacher": "Dr. Martin" },
+    { "day": "Monday", "start": "11:00", "end": "13:00", "title": "Red Team Lab", "type": "Lab", "room": "Cyber Range", "teacher": "Ms. Kim" },
+    { "day": "Tuesday", "start": "10:00", "end": "12:00", "title": "Threat Hunting", "type": "Workshop", "room": "C-201", "teacher": "Mr. Ruiz" },
+    { "day": "Wednesday", "start": "09:00", "end": "11:00", "title": "Digital Forensics Studio", "type": "Lab", "room": "Cyber Lab", "teacher": "Coach Rivera" },
+    { "day": "Thursday", "start": "08:30", "end": "10:00", "title": "Security Strategy", "type": "Seminar", "room": "War Room", "teacher": "Guest Panel" },
+    { "day": "Thursday", "start": "10:15", "end": "12:15", "title": "Pen Test Operations", "type": "Lab", "room": "Cyber Range", "teacher": "Ms. Kim" },
+    { "day": "Friday", "start": "13:00", "end": "15:00", "title": "Security Leadership", "type": "Workshop", "room": "Board Room", "teacher": "Security Office" }
+  ]
+}
+""";
+
+        saveTimetable(emma.getEmail(), currentMonday, emmaCurrent);
+        saveTimetable(emma.getEmail(), nextMonday, emmaNext);
+        saveTimetable(lucas.getEmail(), currentMonday, lucasCurrent);
+        saveTimetable(lucas.getEmail(), nextMonday, lucasNext);
     }
 
-    private List<StudentRequest> seedRequests(User alice, User bob) {
+    private void saveTimetable(String program, LocalDate weekStart, String dataJson) {
+        Timetable timetable = timetableRepository
+                .findByProgramAndSemesterAndWeekStart(program, PERSONAL_SEMESTER, weekStart)
+                .orElseGet(() -> Timetable.builder()
+                        .program(program)
+                        .semester(PERSONAL_SEMESTER)
+                        .weekStart(weekStart)
+                        .build());
+        timetable.setDataJson(dataJson);
+        timetableRepository.save(timetable);
+    }
+
+    private List<StudentRequest> seedRequests(User firstStudent, User secondStudent) {
         if (requestRepository.count() > 0) {
             return requestRepository.findAll();
         }
-        StudentRequest aliceReady = StudentRequest.builder()
-                .student(alice)
+        StudentRequest firstReady = StudentRequest.builder()
+                .student(firstStudent)
                 .type(RequestType.CERTIFICAT_SCOLARITE)
                 .status(RequestStatus.READY)
                 .payloadJson("{\"reason\":\"Stage\"}")
                 .files(new ArrayList<>())
                 .build();
-        aliceReady.getFiles().add(RequestFile.builder()
-                .request(aliceReady)
+        firstReady.getFiles().add(RequestFile.builder()
+                .request(firstReady)
                 .filename("piece_identite.pdf")
                 .mime("application/pdf")
                 .url("/uploads/piece_identite.pdf")
                 .build());
 
-        StudentRequest aliceInReview = StudentRequest.builder()
-                .student(alice)
+        StudentRequest firstInReview = StudentRequest.builder()
+                .student(firstStudent)
                 .type(RequestType.ATTESTATION)
                 .status(RequestStatus.IN_REVIEW)
                 .payloadJson("{\"details\":\"Bourse\"}")
                 .files(new ArrayList<>())
                 .build();
 
-        StudentRequest bobReady = StudentRequest.builder()
-                .student(bob)
+        StudentRequest secondReady = StudentRequest.builder()
+                .student(secondStudent)
                 .type(RequestType.CERTIFICAT_SCOLARITE)
                 .status(RequestStatus.READY)
-                .payloadJson("{\"reason\":\"Stage été\"}")
+                .payloadJson("{\"reason\":\"Stage ete\"}")
                 .files(new ArrayList<>())
                 .build();
 
-        StudentRequest bobDelivered = StudentRequest.builder()
-                .student(bob)
+        StudentRequest secondDelivered = StudentRequest.builder()
+                .student(secondStudent)
                 .type(RequestType.ATTESTATION)
                 .status(RequestStatus.DELIVERED)
                 .payloadJson("{\"details\":\"Transport\"}")
                 .files(new ArrayList<>())
                 .build();
 
-        requestRepository.saveAll(List.of(aliceReady, aliceInReview, bobReady, bobDelivered));
-        return List.of(aliceReady, aliceInReview, bobReady, bobDelivered);
+        requestRepository.saveAll(List.of(firstReady, firstInReview, secondReady, secondDelivered));
+        return List.of(firstReady, firstInReview, secondReady, secondDelivered);
     }
 
-    private void seedMessaging(User alice, User bob, User staff) {
+    private void seedMessaging(User firstStudent, User secondStudent, User staffUser) {
         if (threadRepository.count() > 0) {
             return;
         }
-        ThreadEntity certificateThread = threadRepository.save(ThreadEntity.builder()
-                .subject("Demande de certificat")
-                .createdBy(alice)
+        ThreadEntity onboardingThread = threadRepository.save(ThreadEntity.builder()
+                .subject("Bienvenue sur le campus")
+                .createdBy(firstStudent)
                 .build());
-        ThreadEntity paymentThread = threadRepository.save(ThreadEntity.builder()
-                .subject("Suivi paiement frais")
-                .createdBy(alice)
+        ThreadEntity internshipThread = threadRepository.save(ThreadEntity.builder()
+                .subject("Questions stage ete")
+                .createdBy(firstStudent)
                 .build());
-        ThreadEntity attestationThread = threadRepository.save(ThreadEntity.builder()
-                .subject("Attestation transport")
-                .createdBy(bob)
+        ThreadEntity housingThread = threadRepository.save(ThreadEntity.builder()
+                .subject("Logement etudiant")
+                .createdBy(secondStudent)
                 .build());
 
         messageRepository.saveAll(List.of(
-                MessageEntity.builder().thread(certificateThread).sender(alice).content("Bonjour, je souhaite obtenir un certificat de scolarité.").build(),
-                MessageEntity.builder().thread(certificateThread).sender(staff).content("Bonjour Alice, nous traitons votre demande.").build(),
-                MessageEntity.builder().thread(paymentThread).sender(alice).content("Bonjour, je n'arrive pas à finaliser mon paiement.").build(),
-                MessageEntity.builder().thread(paymentThread).sender(staff).content("Bonjour Alice, nous avons relancé le simulateur.").build(),
-                MessageEntity.builder().thread(attestationThread).sender(bob).content("Bonjour, j'ai besoin d'une attestation pour mon abonnement.").build(),
-                MessageEntity.builder().thread(attestationThread).sender(staff).content("Bonjour Bob, la demande est en cours de validation.").build()
+                MessageEntity.builder().thread(onboardingThread).sender(firstStudent).content("Bonjour, pouvez-vous partager les ressources utiles pour commencer le semestre ?").build(),
+                MessageEntity.builder().thread(onboardingThread).sender(staffUser).content("Bonjour Emma, voici le guide d'accueil ainsi que les contacts utiles.").build(),
+                MessageEntity.builder().thread(internshipThread).sender(firstStudent).content("Je cherche un stage en data, avez-vous des pistes recentes ?").build(),
+                MessageEntity.builder().thread(internshipThread).sender(staffUser).content("Oui, deux entreprises partenaires recrutent actuellement.").build(),
+                MessageEntity.builder().thread(housingThread).sender(secondStudent).content("Bonjour, j'ai besoin d'une attestation pour mon logement.").build(),
+                MessageEntity.builder().thread(housingThread).sender(staffUser).content("Bonjour Lucas, l'attestation sera disponible demain matin.").build()
         ));
     }
 
-    private void seedPayments(User alice, User bob, List<StudentRequest> requests) {
+    private void seedPayments(User firstStudent, User secondStudent, List<StudentRequest> requests) {
         if (paymentRepository.count() > 0) {
             return;
         }
-        StudentRequest aliceRequest = requests.stream()
-                .filter(r -> r.getStudent().getId().equals(alice.getId()))
+        StudentRequest firstRequest = requests.stream()
+                .filter(r -> r.getStudent().getId().equals(firstStudent.getId()))
                 .findFirst()
                 .orElse(null);
-        StudentRequest bobRequest = requests.stream()
-                .filter(r -> r.getStudent().getId().equals(bob.getId()))
+        StudentRequest secondRequest = requests.stream()
+                .filter(r -> r.getStudent().getId().equals(secondStudent.getId()))
                 .findFirst()
                 .orElse(null);
 
         paymentRepository.saveAll(List.of(
-                Payment.builder().student(alice).request(aliceRequest).amountCents(2500L).currency("EUR").status(PaymentStatus.SUCCEEDED).providerRef("sim-12345").build(),
-                Payment.builder().student(alice).amountCents(8900L).currency("EUR").status(PaymentStatus.PENDING).providerRef("sim-44556").build(),
-                Payment.builder().student(bob).request(bobRequest).amountCents(2500L).currency("EUR").status(PaymentStatus.SUCCEEDED).providerRef("sim-77889").build(),
-                Payment.builder().student(bob).amountCents(2500L).currency("EUR").status(PaymentStatus.FAILED).providerRef("sim-99001").build()
+                Payment.builder().student(firstStudent).request(firstRequest).amountCents(2_500L).currency("EUR").status(PaymentStatus.SUCCEEDED).providerRef("sim-12345").build(),
+                Payment.builder().student(firstStudent).amountCents(8_900L).currency("EUR").status(PaymentStatus.PENDING).providerRef("sim-44556").build(),
+                Payment.builder().student(secondStudent).request(secondRequest).amountCents(2_500L).currency("EUR").status(PaymentStatus.SUCCEEDED).providerRef("sim-77889").build(),
+                Payment.builder().student(secondStudent).amountCents(2_500L).currency("EUR").status(PaymentStatus.FAILED).providerRef("sim-99001").build()
         ));
     }
 
@@ -208,9 +266,9 @@ public class DemoDataSeeder implements ApplicationRunner {
             return;
         }
         faqRepository.saveAll(List.of(
-                new Faq(null, "Comment obtenir un certificat de scolarité ?", "Créez une demande dans le menu E-guichet et choisissez certificat de scolarité.", List.of("certificat", "administratif")),
-                new Faq(null, "Comment payer mes frais ?", "Utilisez la section Paiements pour créer une intention puis confirmez via le simulateur.", List.of("paiement")),
-                new Faq(null, "Comment contacter le support ?", "Utilisez la messagerie intégrée pour envoyer un message au guichet.", List.of("support"))
+                new Faq(null, "Comment obtenir un certificat de scolarite ?", "Creez une demande dans le menu E-guichet puis choisissez certificat de scolarite.", List.of("certificat", "administratif")),
+                new Faq(null, "Comment payer mes frais ?", "Utilisez la section Paiements pour creer une intention puis confirmez via le simulateur.", List.of("paiement")),
+                new Faq(null, "Comment contacter le support ?", "Utilisez la messagerie integree pour envoyer un message au guichet.", List.of("support"))
         ));
     }
 }
