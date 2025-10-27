@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: payment-simulator
+server:
+  port: 9090
+
+simulator:
+  api-key: dev-api-key
+  webhook-url: http://localhost:8080/api/payments/webhook
+  confirmation-latency: PT2S
+

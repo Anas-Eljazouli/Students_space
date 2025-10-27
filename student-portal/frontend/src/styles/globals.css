@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+  min-height: 100%;
+}
+
+a {
+  color: theme("colors.brand.DEFAULT");
+}
+
+.btn {
+  @apply inline-flex items-center justify-center rounded-md bg-brand px-4 py-2 text-white shadow transition hover:bg-brand-dark;
+}
+
+.card {
+  @apply rounded-xl bg-white p-6 shadow-sm ring-1 ring-slate-100;
+}

@@ -1,0 +1,54 @@
+spring:
+  application:
+    name: student-portal
+  datasource:
+    url: jdbc:postgresql://localhost:5432/student_portal
+    username: student_portal
+    password: student_portal
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+    open-in-view: false
+  flyway:
+    enabled: true
+  mail:
+    host: localhost
+    port: 1025
+    username: ""
+    password: ""
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
+server:
+  port: 8080
+  error:
+    include-message: always
+
+logging:
+  level:
+    org.springframework.security: INFO
+    com.school.portal: DEBUG
+
+jwt:
+  issuer: student-portal
+  access-token-validity: PT15M
+  refresh-token-validity: PT8H
+  secret: c3R1ZGVudC1wb3J0YWwtc2VjcmV0LXN0cmluZy1iYXNlNjQ=
+
+payment:
+  simulator:
+    base-url: http://localhost:9090
+    api-key: dev-api-key
+
+notifications:
+  websocket:
+    endpoint: /ws/notifications
+    application-destination-prefix: /app
+    broker-destination-prefix: /topic
+

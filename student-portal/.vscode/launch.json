@@ -1,0 +1,44 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Backend - Spring Boot",
+      "type": "java",
+      "request": "launch",
+      "mainClass": "com.school.portal.StudentPortalApplication",
+      "projectName": "student-portal-backend",
+      "cwd": "${workspaceFolder}/backend"
+    },
+    {
+      "name": "Payment Simulator - Spring Boot",
+      "type": "java",
+      "request": "launch",
+      "mainClass": "com.school.paymentsimulator.PaymentSimulatorApplication",
+      "projectName": "payment-simulator",
+      "cwd": "${workspaceFolder}/payment-simulator"
+    },
+    {
+      "name": "Frontend - Next.js dev",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
+      "cwd": "${workspaceFolder}/frontend",
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**"],
+      "env": {
+        "NODE_OPTIONS": "--inspect"
+      }
+    },
+    {
+      "name": "Chrome Debug",
+      "type": "pwa-chrome",
+      "request": "launch",
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}/frontend"
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Docker Compose Up",
+      "type": "shell",
+      "command": "cd ${workspaceFolder}/infra && docker compose up -d"
+    },
+    {
+      "label": "Docker Compose Down",
+      "type": "shell",
+      "command": "cd ${workspaceFolder}/infra && docker compose down"
+    },
+    {
+      "label": "Backend - mvnw spring-boot:run",
+      "type": "shell",
+      "command": "cd ${workspaceFolder}/backend && ./mvnw spring-boot:run",
+      "problemMatcher": []
+    },
+    {
+      "label": "Backend - mvnw test",
+      "type": "shell",
+      "command": "cd ${workspaceFolder}/backend && ./mvnw test",
+      "problemMatcher": []
+    },
+    {
+      "label": "Payment Simulator - run",
+      "type": "shell",
+      "command": "cd ${workspaceFolder}/payment-simulator && ./mvnw spring-boot:run",
+      "problemMatcher": []
+    },
+    {
+      "label": "Frontend - npm install",
+      "type": "shell",
+      "command": "cd ${workspaceFolder}/frontend && npm install"
+    },
+    {
+      "label": "Frontend - npm run dev",
+      "type": "shell",
+      "command": "cd ${workspaceFolder}/frontend && npm run dev"
+    },
+    {
+      "label": "Frontend - npm run test",
+      "type": "shell",
+      "command": "cd ${workspaceFolder}/frontend && npm run test"
+    }
+  ]
+}

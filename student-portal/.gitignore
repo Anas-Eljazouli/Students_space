@@ -1,0 +1,14 @@
+# Node
+frontend/node_modules
+frontend/.next
+frontend/.turbo
+frontend/.env.local
+
+# Java
+backend/target
+payment-simulator/target
+
+# Misc
+.idea
+.DS_Store
+uploads/
