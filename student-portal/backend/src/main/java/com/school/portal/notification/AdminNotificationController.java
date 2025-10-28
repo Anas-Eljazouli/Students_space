@@ -32,13 +32,13 @@ public class AdminNotificationController {
     private final UserService userService;
 
     @GetMapping("/students")
-    @PreAuthorize("hasAnyRole('STAFF','ADMIN')")
+    @PreAuthorize("hasAnyRole('PROFESSOR','ADMIN')")
     public ResponseEntity<List<UserDto>> listStudents() {
         return ResponseEntity.ok(userService.findAllByRole(RoleType.STUDENT));
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('STAFF','ADMIN')")
+    @PreAuthorize("hasAnyRole('PROFESSOR','ADMIN')")
     public ResponseEntity<Void> sendNotification(@AuthenticationPrincipal UserDetails principal,
                                                  @Valid @RequestBody SendNotificationRequest request) {
         var sender = currentUserService.requireUser(principal);

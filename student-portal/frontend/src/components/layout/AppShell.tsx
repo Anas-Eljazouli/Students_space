@@ -13,11 +13,15 @@ import { api } from "../../lib/api";
 const navItems = [
   { href: "/student/dashboard", label: "Tableau de bord", roles: ["STUDENT"] },
   { href: "/student/grades", label: "Notes", roles: ["STUDENT"] },
+  { href: "/student/absences", label: "Absences", roles: ["STUDENT"] },
   { href: "/student/timetable", label: "Emploi du temps", roles: ["STUDENT"] },
   { href: "/student/requests", label: "E-guichet", roles: ["STUDENT"] },
   { href: "/student/payments", label: "Paiements", roles: ["STUDENT"] },
-  { href: "/staff/requests", label: "Demandes", roles: ["STAFF", "ADMIN"] },
-  { href: "/staff/messages", label: "Messages", roles: ["STAFF", "ADMIN"] },
+  { href: "/professor/dashboard", label: "Tableau de bord", roles: ["PROFESSOR"] },
+  { href: "/professor/grades", label: "Notes", roles: ["PROFESSOR"] },
+  { href: "/professor/absences", label: "Absences", roles: ["PROFESSOR"] },
+  { href: "/professor/timetable", label: "Emploi du temps", roles: ["PROFESSOR"] },
+  { href: "/admin/payments", label: "Paiements", roles: ["ADMIN"] },
   { href: "/admin/users", label: "Utilisateurs", roles: ["ADMIN"] }
 ];
 

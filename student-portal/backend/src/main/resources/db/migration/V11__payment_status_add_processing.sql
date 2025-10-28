@@ -1,0 +1,2 @@
+ALTER TYPE payment_status ADD VALUE IF NOT EXISTS 'PROCESSING';
+UPDATE payments SET status = 'PROCESSING' WHERE status = 'PENDING';

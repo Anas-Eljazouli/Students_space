@@ -137,3 +137,5 @@ INSERT INTO faq_tags (faq_id, tag) VALUES
  (1, 'administratif'),
  (2, 'paiement'),
  (3, 'support');
+
+

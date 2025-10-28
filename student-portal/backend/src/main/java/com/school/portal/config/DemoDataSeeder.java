@@ -40,6 +40,7 @@ import java.util.List;
 public class DemoDataSeeder implements ApplicationRunner {
 
     private static final String PERSONAL_SEMESTER = "PERSONAL";
+    private static final String DEFAULT_SESSION = "2024-Fall";
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -56,13 +57,13 @@ public class DemoDataSeeder implements ApplicationRunner {
     public void run(ApplicationArguments args) {
         User emma = ensureUser("student1@school.test", "Emma Laurent", RoleType.STUDENT);
         User lucas = ensureUser("student2@school.test", "Lucas Bernard", RoleType.STUDENT);
-        User sophie = ensureUser("staff@school.test", "Sophie Martin", RoleType.STAFF);
+        User professor = ensureUser("professor@school.test", "Sophie Martin", RoleType.PROFESSOR);
         ensureUser("admin@school.test", "Noah Leroy", RoleType.ADMIN);
 
         seedGrades(emma, lucas);
-        seedTimetables(emma, lucas);
+        seedTimetables(emma, lucas, professor);
         List<StudentRequest> requests = seedRequests(emma, lucas);
-        seedMessaging(emma, lucas, sophie);
+        seedMessaging(emma, lucas, professor);
         seedPayments(emma, lucas, requests);
         seedFaqs();
     }
@@ -81,15 +82,15 @@ public class DemoDataSeeder implements ApplicationRunner {
             return;
         }
         gradeRepository.saveAll(List.of(
-                Grade.builder().student(emma).moduleCode("ALG204").moduleTitle("Algorithms II").session("2024-Fall").grade(15.5).publishedAt(Instant.now().minusSeconds(720000)).build(),
-                Grade.builder().student(emma).moduleCode("NET210").moduleTitle("Computer Networks").session("2024-Fall").grade(13.0).publishedAt(Instant.now().minusSeconds(604800)).build(),
-                Grade.builder().student(emma).moduleCode("UX150").moduleTitle("Human Computer Interaction").session("2024-Fall").grade(16.5).publishedAt(Instant.now().minusSeconds(432000)).build(),
-                Grade.builder().student(lucas).moduleCode("AI220").moduleTitle("Applied Machine Learning").session("2024-Fall").grade(14.2).publishedAt(Instant.now().minusSeconds(518400)).build(),
-                Grade.builder().student(lucas).moduleCode("DB230").moduleTitle("Advanced Databases").session("2024-Fall").grade(17.0).publishedAt(Instant.now().minusSeconds(259200)).build()
+                Grade.builder().student(emma).moduleCode("ALG204").moduleTitle("Algorithms II").session(DEFAULT_SESSION).grade(15.5).publishedAt(Instant.now().minusSeconds(720000)).build(),
+                Grade.builder().student(emma).moduleCode("NET210").moduleTitle("Computer Networks").session(DEFAULT_SESSION).grade(13.0).publishedAt(Instant.now().minusSeconds(604800)).build(),
+                Grade.builder().student(emma).moduleCode("UX150").moduleTitle("Human Computer Interaction").session(DEFAULT_SESSION).grade(16.5).publishedAt(Instant.now().minusSeconds(432000)).build(),
+                Grade.builder().student(lucas).moduleCode("AI220").moduleTitle("Applied Machine Learning").session(DEFAULT_SESSION).grade(14.2).publishedAt(Instant.now().minusSeconds(518400)).build(),
+                Grade.builder().student(lucas).moduleCode("DB230").moduleTitle("Advanced Databases").session(DEFAULT_SESSION).grade(17.0).publishedAt(Instant.now().minusSeconds(259200)).build()
         ));
     }
 
-    private void seedTimetables(User emma, User lucas) {
+    private void seedTimetables(User emma, User lucas, User professor) {
         LocalDate currentMonday = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
         LocalDate nextMonday = currentMonday.plusWeeks(1);
 
@@ -101,7 +102,7 @@ public class DemoDataSeeder implements ApplicationRunner {
     { "day": "Tuesday", "start": "09:00", "end": "11:00", "title": "Statistics Clinic", "type": "Workshop", "room": "B-110", "teacher": "Prof. Nguyen" },
     { "day": "Wednesday", "start": "13:30", "end": "15:30", "title": "Machine Learning Project", "type": "Lab", "room": "AI Studio", "teacher": "Coach Reed" },
     { "day": "Thursday", "start": "08:30", "end": "10:00", "title": "Ethics in AI", "type": "Seminar", "room": "Auditorium", "teacher": "Dr. Patel" },
-    { "day": "Thursday", "start": "10:15", "end": "11:45", "title": "Data Visualization Studio", "type": "Lab", "room": "Design Hub", "teacher": "Ms. Lopez" },
+    { "day": "Thursday", "start": "10:15", "end": "11:45", "title": "Data Visualization Studio", "type": "Lab", "room": "Design Hub", "teacher": "Prof. Martin" },
     { "day": "Friday", "start": "09:30", "end": "11:00", "title": "Startup Lab", "type": "Workshop", "room": "Innovation Lab", "teacher": "Mentor Squad" }
   ]
 }
@@ -115,7 +116,7 @@ public class DemoDataSeeder implements ApplicationRunner {
     { "day": "Tuesday", "start": "14:00", "end": "15:30", "title": "Career Coaching", "type": "Seminar", "room": "Advising Center", "teacher": "Career Team" },
     { "day": "Wednesday", "start": "10:00", "end": "12:00", "title": "Data Ethics Workshop", "type": "Workshop", "room": "B-110", "teacher": "Prof. Nguyen" },
     { "day": "Thursday", "start": "09:30", "end": "11:30", "title": "Capstone Sprint", "type": "Lab", "room": "AI Studio", "teacher": "Coach Reed" },
-    { "day": "Friday", "start": "08:30", "end": "10:00", "title": "Visualization Critique", "type": "Seminar", "room": "Design Hub", "teacher": "Ms. Lopez" },
+    { "day": "Friday", "start": "08:30", "end": "10:00", "title": "Visualization Critique", "type": "Seminar", "room": "Design Hub", "teacher": "Prof. Martin" },
     { "day": "Friday", "start": "10:15", "end": "11:45", "title": "Innovation Pitch", "type": "Workshop", "room": "Innovation Lab", "teacher": "Mentor Squad" }
   ]
 }
@@ -124,7 +125,7 @@ public class DemoDataSeeder implements ApplicationRunner {
         String lucasCurrent = """
 {
   "events": [
-    { "day": "Monday", "start": "10:00", "end": "12:00", "title": "Network Forensics", "type": "Lecture", "room": "C-305", "teacher": "Dr. Martin" },
+    { "day": "Monday", "start": "10:00", "end": "12:00", "title": "Network Forensics", "type": "Lecture", "room": "C-305", "teacher": "Prof. Martin" },
     { "day": "Monday", "start": "13:30", "end": "15:30", "title": "Security Operations Lab", "type": "Lab", "room": "Cyber Lab", "teacher": "Ms. Kim" },
     { "day": "Tuesday", "start": "09:00", "end": "10:30", "title": "Secure Coding", "type": "Workshop", "room": "C-201", "teacher": "Mr. Ruiz" },
     { "day": "Wednesday", "start": "08:30", "end": "10:00", "title": "Incident Response", "type": "Lecture", "room": "C-305", "teacher": "Dr. Martin" },
@@ -149,10 +150,30 @@ public class DemoDataSeeder implements ApplicationRunner {
 }
 """;
 
+        String professorCurrent = """
+{
+  "events": [
+    { "day": "Monday", "start": "10:00", "end": "12:00", "title": "Network Forensics", "type": "Lecture", "room": "C-305", "teacher": "Prof. Martin" },
+    { "day": "Thursday", "start": "10:15", "end": "11:45", "title": "Data Visualization Studio", "type": "Lab", "room": "Design Hub", "teacher": "Prof. Martin" }
+  ]
+}
+""";
+
+        String professorNext = """
+{
+  "events": [
+    { "day": "Monday", "start": "10:00", "end": "12:00", "title": "Network Forensics", "type": "Lecture", "room": "C-305", "teacher": "Prof. Martin" },
+    { "day": "Thursday", "start": "10:15", "end": "11:45", "title": "Data Visualization Studio", "type": "Lab", "room": "Design Hub", "teacher": "Prof. Martin" }
+  ]
+}
+""";
+
         saveTimetable(emma.getEmail(), currentMonday, emmaCurrent);
         saveTimetable(emma.getEmail(), nextMonday, emmaNext);
         saveTimetable(lucas.getEmail(), currentMonday, lucasCurrent);
         saveTimetable(lucas.getEmail(), nextMonday, lucasNext);
+        saveTimetable(professor.getEmail(), currentMonday, professorCurrent);
+        saveTimetable(professor.getEmail(), nextMonday, professorNext);
     }
 
     private void saveTimetable(String program, LocalDate weekStart, String dataJson) {
@@ -213,7 +234,7 @@ public class DemoDataSeeder implements ApplicationRunner {
         return List.of(firstReady, firstInReview, secondReady, secondDelivered);
     }
 
-    private void seedMessaging(User firstStudent, User secondStudent, User staffUser) {
+    private void seedMessaging(User firstStudent, User secondStudent, User professorUser) {
         if (threadRepository.count() > 0) {
             return;
         }
@@ -232,11 +253,11 @@ public class DemoDataSeeder implements ApplicationRunner {
 
         messageRepository.saveAll(List.of(
                 MessageEntity.builder().thread(onboardingThread).sender(firstStudent).content("Bonjour, pouvez-vous partager les ressources utiles pour commencer le semestre ?").build(),
-                MessageEntity.builder().thread(onboardingThread).sender(staffUser).content("Bonjour Emma, voici le guide d'accueil ainsi que les contacts utiles.").build(),
+                MessageEntity.builder().thread(onboardingThread).sender(professorUser).content("Bonjour Emma, voici le guide d'accueil ainsi que les contacts utiles.").build(),
                 MessageEntity.builder().thread(internshipThread).sender(firstStudent).content("Je cherche un stage en data, avez-vous des pistes recentes ?").build(),
-                MessageEntity.builder().thread(internshipThread).sender(staffUser).content("Oui, deux entreprises partenaires recrutent actuellement.").build(),
+                MessageEntity.builder().thread(internshipThread).sender(professorUser).content("Oui, deux entreprises partenaires recrutent actuellement.").build(),
                 MessageEntity.builder().thread(housingThread).sender(secondStudent).content("Bonjour, j'ai besoin d'une attestation pour mon logement.").build(),
-                MessageEntity.builder().thread(housingThread).sender(staffUser).content("Bonjour Lucas, l'attestation sera disponible demain matin.").build()
+                MessageEntity.builder().thread(housingThread).sender(professorUser).content("Bonjour Lucas, l'attestation sera disponible demain matin.").build()
         ));
     }
 
@@ -254,10 +275,48 @@ public class DemoDataSeeder implements ApplicationRunner {
                 .orElse(null);
 
         paymentRepository.saveAll(List.of(
-                Payment.builder().student(firstStudent).request(firstRequest).amountCents(2_500L).currency("EUR").status(PaymentStatus.SUCCEEDED).providerRef("sim-12345").build(),
-                Payment.builder().student(firstStudent).amountCents(8_900L).currency("EUR").status(PaymentStatus.PENDING).providerRef("sim-44556").build(),
-                Payment.builder().student(secondStudent).request(secondRequest).amountCents(2_500L).currency("EUR").status(PaymentStatus.SUCCEEDED).providerRef("sim-77889").build(),
-                Payment.builder().student(secondStudent).amountCents(2_500L).currency("EUR").status(PaymentStatus.FAILED).providerRef("sim-99001").build()
+                Payment.builder()
+                        .student(firstStudent)
+                        .request(firstRequest)
+                        .amountCents(2_500L)
+                        .currency("EUR")
+                        .label("Frais de certificat")
+                        .paymentMethod("Carte bancaire")
+                        .status(PaymentStatus.SUCCEEDED)
+                        .justificationUrl("/uploads/paiement_certificat.pdf")
+                        .justificationName("paiement_certificat.pdf")
+                        .justificationMime("application/pdf")
+                        .statusNotes("Reglement confirme manuellement")
+                        .build(),
+                Payment.builder()
+                        .student(firstStudent)
+                        .amountCents(8_900L)
+                        .currency("EUR")
+                        .label("Frais de scolarite")
+                        .paymentMethod("Virement")
+                        .status(PaymentStatus.PROCESSING)
+                        .build(),
+                Payment.builder()
+                        .student(secondStudent)
+                        .request(secondRequest)
+                        .amountCents(2_500L)
+                        .currency("EUR")
+                        .label("Frais dossier logement")
+                        .paymentMethod("Carte bancaire")
+                        .status(PaymentStatus.SUCCEEDED)
+                        .justificationUrl("/uploads/paiement_logement.pdf")
+                        .justificationName("paiement_logement.pdf")
+                        .justificationMime("application/pdf")
+                        .build(),
+                Payment.builder()
+                        .student(secondStudent)
+                        .amountCents(2_500L)
+                        .currency("EUR")
+                        .label("Assurance etudiant")
+                        .paymentMethod("Especes")
+                        .status(PaymentStatus.FAILED)
+                        .statusNotes("Documents justificatifs manquants")
+                        .build()
         ));
     }
 
@@ -267,7 +326,7 @@ public class DemoDataSeeder implements ApplicationRunner {
         }
         faqRepository.saveAll(List.of(
                 new Faq(null, "Comment obtenir un certificat de scolarite ?", "Creez une demande dans le menu E-guichet puis choisissez certificat de scolarite.", List.of("certificat", "administratif")),
-                new Faq(null, "Comment payer mes frais ?", "Utilisez la section Paiements pour creer une intention puis confirmez via le simulateur.", List.of("paiement")),
+                new Faq(null, "Comment payer mes frais ?", "Renseignez le formulaire Paiements avec le justificatif puis attendez la validation du service administratif.", List.of("paiement")),
                 new Faq(null, "Comment contacter le support ?", "Utilisez la messagerie integree pour envoyer un message au guichet.", List.of("support"))
         ));
     }

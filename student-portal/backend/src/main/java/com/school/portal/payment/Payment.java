@@ -36,12 +36,27 @@ public class Payment {
     @Column(nullable = false)
     private String currency;
 
+    @Column(nullable = false)
+    private String label;
+
+    @Column(name = "payment_method", nullable = false)
+    private String paymentMethod;
+
+    @Column(name = "justification_url")
+    private String justificationUrl;
+
+    @Column(name = "justification_name")
+    private String justificationName;
+
+    @Column(name = "justification_mime")
+    private String justificationMime;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private PaymentStatus status;
 
-    @Column(nullable = false)
-    private String providerRef;
+    @Column(name = "status_notes")
+    private String statusNotes;
 
     @CreationTimestamp
     private Instant createdAt;

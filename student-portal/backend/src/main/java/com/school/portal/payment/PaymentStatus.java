@@ -1,7 +1,7 @@
 package com.school.portal.payment;
 
 public enum PaymentStatus {
-    PENDING,
+    PROCESSING,
     SUCCEEDED,
     FAILED,
     REFUNDED

@@ -9,6 +9,7 @@ import org.mapstruct.Mapping;
 public interface PaymentMapper {
 
     @Mapping(target = "studentId", source = "student.id")
+    @Mapping(target = "studentName", source = "student.fullName")
     @Mapping(target = "requestId", source = "request.id")
     PaymentDto toDto(Payment entity);
 }

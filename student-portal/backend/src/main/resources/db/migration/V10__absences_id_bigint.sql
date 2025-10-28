@@ -1,0 +1,2 @@
+ALTER TABLE student_absences ALTER COLUMN id TYPE BIGINT;
+

@@ -81,7 +81,8 @@ Les migrations Flyway créent un jeu de données de démonstration :
 - **Utilisateurs**
   - Étudiant : `student1@school.test` / `Passw0rd!`
   - Étudiant : `student2@school.test` / `Passw0rd!`
-  - Staff : `staff@school.test` / `Passw0rd!`
+  - Professeur : `professor@school.test` / `Passw0rd!`
+    - modules enseign�s : Network Forensics & Data Visualization Studio (gestion des notes et absences)
   - Admin : `admin@school.test` / `Passw0rd!`
 - **Notes** : 4 modules récents
 - **Emploi du temps** : semaine en cours avec cours et examens
@@ -146,4 +147,5 @@ Les tests backend utilisent Testcontainers pour lancer PostgreSQL et vérifier l
 ## Captures d'écran
 
 Les captures d'écran de référence sont disponibles dans `frontend/public/screenshots/`.
+
 
