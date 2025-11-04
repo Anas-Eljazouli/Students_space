@@ -25,20 +25,43 @@ export default function NewRequestPage() {
   } = useForm<FormValues>({ resolver: zodResolver(schema) });
 
   const onSubmit = async (values: FormValues) => {
-    const payload = JSON.stringify({ reason: values.reason });
-    const response = await api.post("/api/requests", {
-      type: values.type,
-      payloadJson: payload
-    });
-    if (file) {
-      const formData = new FormData();
-      formData.append("file", file);
-      await api.post(`/api/requests/${response.data.id}/files`, formData, {
-        headers: { "Content-Type": "multipart/form-data" }
+    try {
+      const payload = {
+        type: values.type,
+        payloadJson: JSON.stringify({ reason: values.reason })
+      };
+      console.log('Sending request with payload:', payload);
+      const response = await api.post("/api/requests", payload, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
       });
+      
+      if (file) {
+        try {
+          const formData = new FormData();
+          formData.append("file", file);
+          await api.post(`/api/requests/${response.data.id}/files`, formData, {
+            headers: { "Content-Type": "multipart/form-data" }
+          });
+        } catch (error: any) {
+          console.error("File upload error:", error);
+          toast.error("Erreur lors du téléchargement du fichier");
+          return;
+        }
+      }
+      
+      toast.success("Demande créée");
+      router.push("/student/requests");
+    } catch (error: any) {
+      console.error("Request creation error:", error);
+      console.log("Full error response:", error.response?.data);
+      console.log("Request data sent:", {
+        type: values.type,
+        payloadJson: JSON.stringify({ reason: values.reason })
+      });
+      toast.error(error.response?.data?.message || "Erreur lors de la création de la demande");
     }
-    toast.success("Demande créée");
-    router.push("/student/requests");
   };
 
   return (

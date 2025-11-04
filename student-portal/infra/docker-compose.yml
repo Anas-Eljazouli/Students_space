@@ -20,7 +20,11 @@ services:
   pgadmin:
     image: dpage/pgadmin4:8.4
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@local.test
+      # Use a valid-looking email address to avoid pgAdmin email validation issues.
+      # The previous value (admin@local.test) may be rejected by pgAdmin's validator
+      # because the domain part is considered special/reserved. Change it to a
+      # conventional example address which will be accepted.
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
       PGADMIN_DEFAULT_PASSWORD: admin123
     ports:
       - "5050:80"
